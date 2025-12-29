@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>火之明辨｜數字反應</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font: Noto Sans TC (Standardized) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Noto Sans TC"', 'system-ui', '-apple-system', 'sans-serif'],
+            },
+            fontSize: {
+              'mobile-title': '7.5vw', // Special case for mobile headline
+            },
+            borderRadius: {
+              'card': '24px',
+              'btn': '12px',
+            },
+            colors: {
+              // 基底色系：木之眼力延續
+              wood: {
+                50: '#fdf8f6',
+                100: '#f2e8e5',
+                200: '#eaddd7',
+                300: '#e0cec7',
+                400: '#d2bab0',
+                500: '#a18e87',
+                600: '#8a7a74',
+                700: '#72635e',
+                800: '#5e514d',
+                900: '#4a403d',
+              },
+              // 主題色系：心火（紅/橘）
+              fire: {
+                light: '#ffebee',
+                main: '#d32f2f', // 深紅
+                dark: '#b71c1c',
+                accent: '#ff5722', // 暖橘
+              }
+            },
+            animation: {
+              'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+              'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'ping-slow': 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
+            },
+            keyframes: {
+              shake: {
+                '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+              },
+              pop: {
+                '0%': { transform: 'scale(0.5)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Noto Sans TC', sans-serif;
+        background-color: #fdf8f6;
+        overflow: hidden; /* 禁止捲動 */
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+      
+      /* Updated Wood Texture per request */
+      .wood-texture {
+        background-color: #fcf6f0;
+        background-image:
+            radial-gradient(#d4c5b8 0.5px, transparent 0.5px),
+            radial-gradient(#d4c5b8 0.5px, #fcf6f0 0.5px);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+      }
+      
+      /* Utility */
+      .hidden-force { display: none !important; }
+      .fade-in { animation: fadeIn 0.3s ease-out; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      
+      /* Circle Mark Animation */
+      .circle-enter {
+        animation: circleScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+      @keyframes circleScale {
+        from { transform: scale(0.5); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+      
+      /* Hide Scrollbar */
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="wood-texture text-wood-900 h-[100dvh] w-screen overflow-hidden font-sans">
+
+    <!-- App Container -->
+    <div id="app" class="relative h-full w-full flex flex-col">
+        
+        <!-- 1. Start Screen -->
+        <!-- Removed bg-wood-50/80 and backdrop-blur-sm to reveal body texture -->
+        <div id="screen-start" class="absolute inset-0 z-30 overflow-y-auto">
+            <div class="min-h-full w-full flex items-center justify-center p-4">
+                <div class="w-full max-w-[420px] bg-white/90 backdrop-blur-md p-6 md:p-8 rounded-card shadow-xl border-2 border-wood-300 text-center fade-in">
+                    <div class="mb-6 md:mb-8"><span class="text-5xl md:text-5xl drop-shadow-sm leading-none">🔥</span></div>
+                    
+                    <h1 class="text-mobile-title md:text-[32px] font-black text-wood-900 mb-6 md:mb-8 tracking-wide leading-[1.1] whitespace-nowrap">火之明辨｜數字反應</h1>
+
+                    <div class="bg-wood-50 p-6 md:p-8 rounded-xl border border-wood-200 text-left mb-6 md:mb-8">
+                        <div class="mb-4">
+                             <p class="text-[20px] font-bold text-wood-900 leading-[1.4]">心主血，血脈充盈則神清反應快</p>
+                        </div>
+
+                        <div class="text-wood-700 text-[16px] font-medium mb-6 leading-[1.6]">
+                            <p>火行對應臟腑為心與小腸，與精神清明、思緒敏捷相關。</p>
+                        </div>
+
+                        <h2 class="text-[20px] font-bold text-wood-800 mb-3 flex items-center gap-2 border-b border-wood-200 pb-2 leading-[1.4]">
+                            <span>📜 遊戲規則</span>
+                        </h2>
+                        
+                        <ul class="space-y-3 text-wood-800 leading-[1.6] text-[16px] font-medium">
+                            <li class="flex items-start gap-2">
+                                <span class="font-bold text-fire-main shrink-0">①</span>
+                                <span>限時 <strong class="text-wood-900">20秒</strong>，從小到大找出 <span class="text-fire-main font-bold">1~25</span></span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="font-bold text-fire-main shrink-0">②</span>
+                                <span>點對顯示<span class="text-green-600 font-bold">綠圈</span>，點錯顯示<span class="text-red-500 font-bold">紅圈</span></span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="font-bold text-fire-main shrink-0">③</span>
+                                <span>時間到，依「圈選最後的數字」計分</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="game.startCountdown()" class="w-full rounded-btn transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 bg-gradient-to-r from-fire-main to-fire-accent hover:from-red-700 hover:to-orange-600 text-white py-[12px] text-[24px] font-bold border border-fire-dark/10 tracking-wider leading-snug">
+                        開始遊戲
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Game Screen -->
+        <div id="screen-game" class="hidden-force flex flex-col h-full w-full">
+            <!-- Top Bar -->
+            <div class="flex-none z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-wood-200 h-[64px] px-4">
+                <div class="max-w-4xl mx-auto h-full flex items-center justify-between">
+                    <!-- Timer -->
+                    <div class="flex items-center gap-3 w-1/3">
+                        <div id="timer-container" class="flex items-center gap-2 min-w-[100px] justify-center transition-colors duration-300">
+                           <span class="text-[32px] leading-none">⏳</span>
+                           <span id="timer-val" class="font-mono text-[32px] font-bold text-wood-900 leading-none">20s</span>
+                        </div>
+                    </div>
+                    <!-- Title -->
+                    <div class="hidden md:block w-1/3 text-center text-wood-500 text-[20px] font-bold tracking-widest opacity-80 leading-[1.3]">心之明辨</div>
+                    
+                    <!-- Buttons -->
+                    <div class="flex items-center justify-end gap-2 w-2/3 md:w-1/3">
+                        <button onclick="ui.showRules()" class="rounded-btn transition-all active:scale-95 flex items-center justify-center gap-1 text-wood-600 hover:bg-wood-100 px-3 py-2 text-[16px] font-bold leading-snug border-2 border-wood-200">
+                            規則
+                        </button>
+                        <button onclick="game.restart()" class="rounded-btn transition-all active:scale-95 flex items-center justify-center gap-1 bg-wood-200 hover:bg-wood-300 text-wood-800 px-3 py-2 text-[16px] font-bold border border-wood-300 leading-snug">
+                            重來
+                        </button>
+                        <button id="btn-result" onclick="ui.showResult()" disabled class="rounded-btn transition-all active:scale-95 flex items-center justify-center gap-1 bg-fire-main hover:bg-fire-dark text-white px-3 py-2 text-[16px] font-bold opacity-50 cursor-not-allowed shadow-md border border-fire-dark/20 leading-snug">
+                            結果
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Area: Random Layout -->
+            <div class="flex-grow w-full max-w-4xl mx-auto relative overflow-hidden" id="game-area-container">
+                <div id="game-area" class="w-full h-full relative">
+                    <!-- Numbers injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Countdown Overlay -->
+        <div id="overlay-countdown" class="hidden-force fixed inset-0 z-50 flex items-center justify-center bg-wood-900/40 backdrop-blur-sm">
+            <div id="countdown-number" class="text-[96px] font-black text-white drop-shadow-2xl animate-ping leading-[1.0]">3</div>
+        </div>
+
+        <!-- 4. Result Modal -->
+        <div id="modal-result" class="hidden-force fixed inset-0 z-50 flex items-center justify-center p-4 bg-wood-900/60 backdrop-blur-sm fade-in">
+            <div class="relative bg-white rounded-card shadow-2xl w-full max-w-[420px] overflow-hidden p-[24px] text-center border border-wood-200 max-h-[90vh] overflow-y-auto scrollbar-hide">
+                
+                <button onclick="ui.closeResult()" class="absolute top-3 right-3 p-2 text-wood-400 hover:text-wood-700 transition-colors active:scale-90 bg-wood-50 hover:bg-wood-100 rounded-full z-10 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <div class="text-[64px] mb-4 animate-pop leading-none">🔥</div>
+                
+                <div class="mb-4">
+                    <p class="text-wood-500 mb-1 text-[18px] font-bold tracking-wider leading-[1.3]">尋找結果</p>
+                    <!-- RWD: Text size smaller on mobile -->
+                    <p class="text-[24px] md:text-[32px] font-black text-wood-900 leading-[1.2]">
+                        找到第 <span id="res-count" class="text-fire-main">0</span> / 25 個數字
+                    </p>
+                </div>
+                
+                <div class="bg-wood-50 p-5 rounded-xl border border-wood-200 mb-5">
+                    <h3 id="res-msg" class="text-[24px] font-bold text-fire-dark mb-2 leading-snug"></h3>
+                    <p id="res-submsg" class="text-wood-600 text-[16px] font-medium mb-4 leading-[1.6]"></p>
+                    
+                    <div class="flex justify-center items-center">
+                        <!-- Padding increased to px-[50px] -->
+                        <div class="bg-white px-[50px] py-2 rounded-[2px] border border-wood-200 shadow-sm flex items-center justify-center gap-2 w-full max-w-[300px]">
+                             <span class="text-[18px] text-wood-700 font-bold whitespace-nowrap">得分：<span id="res-score" class="text-[24px] font-bold text-wood-900">0</span> 分</span>
+                        </div>
+                    </div>
+                </div>
+                    
+                <div class="text-left mb-4">
+                    <h4 class="font-bold text-wood-800 text-[18px] mb-3 pb-2 border-b border-wood-200 leading-snug">🏅 計分方式</h4>
+                    
+                    <div class="space-y-2">
+                        <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-fire-main font-bold text-[14px]">找到第 20-25 個</span>
+                                <span class="text-wood-900 font-black text-[16px]">3分</span>
+                            </div>
+                            <span class="text-wood-600 text-[13px]">心氣充盈，神明清澈</span>
+                        </div>
+                        
+                        <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-fire-main font-bold text-[14px]">找到第 11-19 個</span>
+                                <span class="text-wood-900 font-black text-[16px]">2分</span>
+                            </div>
+                            <span class="text-wood-600 text-[13px]">心氣不錯，專注穩定</span>
+                        </div>
+                        
+                        <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-fire-main font-bold text-[14px]">找到第 0-10 個</span>
+                                <span class="text-wood-900 font-black text-[16px]">1分</span>
+                            </div>
+                            <span class="text-wood-600 text-[13px]">心氣不足，需靜養調整</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 mt-2">
+                    <button onclick="game.startCountdown(); ui.closeResult();" class="w-full rounded-btn transition-all duration-200 shadow-md active:scale-95 flex items-center justify-center gap-2 bg-gradient-to-r from-fire-main to-fire-accent hover:from-red-700 hover:to-orange-600 text-white px-6 py-[12px] text-[18px] font-bold leading-snug">
+                        再來一次
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Rules Modal (In-Game) -->
+        <div id="modal-rules" class="hidden-force fixed inset-0 z-50 flex items-center justify-center p-4 bg-wood-900/60 backdrop-blur-sm fade-in">
+            <div class="relative bg-white rounded-card shadow-2xl w-full max-w-[420px] overflow-hidden p-[24px] border border-wood-200">
+                <button onclick="ui.closeRules()" class="absolute top-3 right-3 p-2 text-wood-400 hover:text-wood-700 transition-colors active:scale-90 bg-wood-50 hover:bg-wood-100 rounded-full z-10 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <p class="text-[18px] font-bold text-wood-900 text-center mb-4 leading-[1.3]">心主血，血脈充盈則神清反應快</p>
+
+                <div class="text-wood-700 text-[16px] font-medium mb-4 leading-[1.6] space-y-2 text-center">
+                    <p>火行對應臟腑為「心」與「小腸」，與精神清明、思緒敏捷相關。</p>
+                </div>
+
+                <h3 class="text-[24px] font-bold text-center text-wood-800 mb-2 leading-[1.3]">📜 遊戲規則</h3>
+                
+                <div class="border-b border-wood-100 mb-4"></div>
+
+                <ul class="space-y-3 text-wood-700 text-[16px] font-medium leading-[1.6]">
+                    <li class="flex gap-3">
+                        <span class="font-bold text-fire-main shrink-0">①</span>
+                        <span>限時 <strong class="text-wood-900">20秒</strong>，從小到大找出 1~25</span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="font-bold text-fire-main shrink-0">②</span>
+                        <span>點對顯示<span class="text-green-600 font-bold">綠圈</span>，點錯顯示<span class="text-red-500 font-bold">紅圈</span></span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="font-bold text-fire-main shrink-0">③</span>
+                        <span>時間到，依「圈選最後的數字」計分</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Game Logic -->
+    <script>
+        const CONFIG = {
+            totalNumbers: 25, 
+            duration: 20,
+            fontFamilies: ['font-sans'], 
+            fontWeights: ['font-bold', 'font-black'],
+            fontSizes: ['text-3xl', 'text-4xl'],
+            colors: ['text-red-600', 'text-orange-600', 'text-purple-700', 'text-emerald-700']
+        };
+
+        const STATE = {
+            status: 'START', // START, COUNTDOWN, PLAYING, FINISHED
+            timeLeft: CONFIG.duration,
+            nextNumber: 1,
+            maxFound: 0,
+            timerId: null,
+            items: [] // { val, x, y, rotation, ... }
+        };
+
+        // UI Controller
+        const ui = {
+            els: {
+                startScreen: document.getElementById('screen-start'),
+                gameScreen: document.getElementById('screen-game'),
+                gameArea: document.getElementById('game-area'),
+                gameAreaContainer: document.getElementById('game-area-container'),
+                timerVal: document.getElementById('timer-val'),
+                timerContainer: document.getElementById('timer-container'),
+                btnResult: document.getElementById('btn-result'),
+                overlayCountdown: document.getElementById('overlay-countdown'),
+                countdownNum: document.getElementById('countdown-number'),
+                modalResult: document.getElementById('modal-result'),
+                modalRules: document.getElementById('modal-rules'),
+                resCount: document.getElementById('res-count'),
+                resMsg: document.getElementById('res-msg'),
+                resSubMsg: document.getElementById('res-submsg'),
+                resScore: document.getElementById('res-score'),
+            },
+
+            showGame() {
+                this.els.startScreen.classList.add('hidden-force');
+                this.els.gameScreen.classList.remove('hidden-force');
+            },
+
+            showStart() {
+                this.els.startScreen.classList.remove('hidden-force');
+                this.els.gameScreen.classList.add('hidden-force');
+            },
+
+            updateTimer(val) {
+                this.els.timerVal.textContent = val + 's';
+                if (val <= 5) {
+                    this.els.timerContainer.classList.add('animate-pulse');
+                    this.els.timerVal.classList.add('text-fire-main');
+                } else {
+                    this.els.timerContainer.classList.remove('animate-pulse');
+                    this.els.timerVal.classList.remove('text-fire-main');
+                }
+            },
+
+            enableResultBtn(enabled) {
+                this.els.btnResult.disabled = !enabled;
+                if (enabled) {
+                    this.els.btnResult.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    this.els.btnResult.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            },
+
+            clearBoard() {
+                this.els.gameArea.innerHTML = '';
+            },
+
+            renderNumber(item) {
+                const el = document.createElement('div');
+                el.className = `absolute flex items-center justify-center cursor-pointer select-none transition-transform active:scale-95 leading-none`;
+                
+                el.classList.add(item.fontFamily, item.fontWeight, item.fontSize, item.color);
+                
+                el.style.left = item.x + 'px';
+                el.style.top = item.y + 'px';
+                el.style.width = '60px'; 
+                el.style.height = '60px';
+                el.style.transform = `rotate(${item.rotation}deg)`;
+                
+                el.dataset.val = item.val;
+                el.innerText = item.val;
+
+                el.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    game.handleInput(item.val, el);
+                });
+
+                this.els.gameArea.appendChild(el);
+            },
+
+            markCorrect(el) {
+                el.className = el.className.replace(/text-\w+-\d+/, '');
+                el.classList.add('text-green-700', 'opacity-60');
+                
+                const circle = document.createElement('div');
+                circle.className = 'absolute inset-0 border-4 border-green-500 rounded-full pointer-events-none circle-enter';
+                el.appendChild(circle);
+            },
+
+            markWrong(el) {
+                el.classList.remove('animate-shake');
+                void el.offsetWidth; 
+                el.classList.add('animate-shake');
+                
+                const circle = document.createElement('div');
+                circle.className = 'absolute inset-0 border-4 border-fire-main rounded-full pointer-events-none transition-opacity duration-500';
+                el.appendChild(circle);
+
+                setTimeout(() => {
+                    circle.style.opacity = '0';
+                    setTimeout(() => {
+                         if(el.contains(circle)) el.removeChild(circle); 
+                    }, 500);
+                }, 300);
+            },
+
+            showCountdown(cb) {
+                this.els.overlayCountdown.classList.remove('hidden-force');
+                let count = 3;
+                this.els.countdownNum.innerText = count;
+                
+                const int = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        this.els.countdownNum.innerText = count;
+                        this.els.countdownNum.classList.remove('animate-ping');
+                        void this.els.countdownNum.offsetWidth;
+                        this.els.countdownNum.classList.add('animate-ping');
+                    } else {
+                        clearInterval(int);
+                        this.els.overlayCountdown.classList.add('hidden-force');
+                        cb();
+                    }
+                }, 1000);
+            },
+
+            showResult() {
+                const result = game.calculateResult();
+                this.els.resCount.innerText = STATE.maxFound;
+                this.els.resMsg.innerText = result.message;
+                this.els.resMsg.className = `text-[24px] font-bold mb-2 leading-snug ${result.colorClass}`;
+                this.els.resSubMsg.innerText = result.subMessage;
+                this.els.resScore.innerText = result.score;
+                this.els.modalResult.classList.remove('hidden-force');
+            },
+
+            closeResult() { this.els.modalResult.classList.add('hidden-force'); },
+            showRules() { this.els.modalRules.classList.remove('hidden-force'); },
+            closeRules() { this.els.modalRules.classList.add('hidden-force'); }
+        };
+
+        const game = {
+            init() {
+                ui.showStart();
+            },
+
+            startCountdown() {
+                ui.showGame();
+                ui.closeResult();
+                ui.enableResultBtn(false);
+                ui.updateTimer(CONFIG.duration);
+                ui.clearBoard();
+                
+                STATE.status = 'COUNTDOWN';
+                ui.showCountdown(() => {
+                    this.startPlaying();
+                });
+            },
+
+            generateNumbers() {
+                STATE.items = [];
+                ui.clearBoard();
+
+                const container = ui.els.gameAreaContainer;
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                
+                const padding = 20;
+                const itemSize = 60;
+
+                for (let i = 1; i <= CONFIG.totalNumbers; i++) {
+                    let item = {
+                        val: i,
+                        x: 0,
+                        y: 0,
+                        rotation: Math.random() * 90 - 45,
+                        fontFamily: CONFIG.fontFamilies[Math.floor(Math.random() * CONFIG.fontFamilies.length)],
+                        fontWeight: CONFIG.fontWeights[Math.floor(Math.random() * CONFIG.fontWeights.length)],
+                        fontSize: CONFIG.fontSizes[Math.floor(Math.random() * CONFIG.fontSizes.length)],
+                        color: CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)]
+                    };
+
+                    let overlap = false;
+                    let maxAttempts = 150;
+                    let attempt = 0;
+
+                    do {
+                        overlap = false;
+                        item.x = Math.random() * (w - itemSize - padding * 2) + padding;
+                        item.y = Math.random() * (h - itemSize - padding * 2) + padding;
+
+                        for (let existing of STATE.items) {
+                            const dist = Math.sqrt(Math.pow(item.x - existing.x, 2) + Math.pow(item.y - existing.y, 2));
+                            if (dist < itemSize) {
+                                overlap = true;
+                                break;
+                            }
+                        }
+                        attempt++;
+                    } while (overlap && attempt < maxAttempts);
+
+                    STATE.items.push(item);
+                    ui.renderNumber(item);
+                }
+            },
+
+            startPlaying() {
+                this.generateNumbers();
+                STATE.status = 'PLAYING';
+                STATE.timeLeft = CONFIG.duration;
+                STATE.nextNumber = 1;
+                STATE.maxFound = 0;
+                
+                if (STATE.timerId) clearInterval(STATE.timerId);
+                STATE.timerId = setInterval(() => {
+                    STATE.timeLeft--;
+                    ui.updateTimer(STATE.timeLeft);
+                    
+                    if (STATE.timeLeft <= 0) {
+                        this.finishGame();
+                    }
+                }, 1000);
+            },
+
+            handleInput(val, el) {
+                if (STATE.status !== 'PLAYING') return;
+
+                if (el.querySelector('.border-green-500')) return;
+
+                if (val === STATE.nextNumber) {
+                    ui.markCorrect(el);
+                    STATE.maxFound = val;
+                    STATE.nextNumber++;
+                    
+                    if (STATE.maxFound === CONFIG.totalNumbers) {
+                        this.finishGame();
+                    }
+                } else {
+                    ui.markWrong(el);
+                }
+            },
+
+            finishGame() {
+                STATE.status = 'FINISHED';
+                clearInterval(STATE.timerId);
+                ui.enableResultBtn(true);
+                ui.showResult();
+            },
+
+            restart() {
+                clearInterval(STATE.timerId);
+                this.init();
+            },
+
+            calculateResult() {
+                const count = STATE.maxFound;
+                if (count >= 20) { 
+                    return { 
+                        score: 3, 
+                        message: '心氣充盈，神明清澈', 
+                        subMessage: '太強了！你的反應與專注力如火純青。',
+                        colorClass: 'text-fire-main'
+                    };
+                } else if (count >= 11) {
+                    return { 
+                        score: 2, 
+                        message: '心氣不錯，專注穩定', 
+                        subMessage: '表現很好！繼續保持這份熱情。',
+                        colorClass: 'text-orange-600'
+                    };
+                } else {
+                    return { 
+                        score: 1, 
+                        message: '心氣不足，需靜養調整', 
+                        subMessage: '別著急，深呼吸調整心緒再來一次。',
+                        colorClass: 'text-fire-main'
+                    };
+                }
+            }
+        };
+
+        game.init();
+    </script>
+</body>
+</html>
